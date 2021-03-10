@@ -1,4 +1,8 @@
-<h1>{{ title }}</h1>
+{% extends "base.html.twig" %}
+
+{% block body %}
+  <div class="container col-md-10">
+    <h1 class="display-4 text-center text-white bg-dark shadow-lg rounded my-5">{{ title }}</h1>
 
 {# Twig est un langage de rendu, un moteur de template, qui permet de traiter et d'afficher les données transmit par le controller sur les différents template #}
 {# Twig est intégrer automatiquement au framework Symfony #}
@@ -30,3 +34,6 @@ is reproduced below for those interested. Sections 1.10.32 and
 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced 
 in their exact original form, accompanied by English versions from the 1914 
 translation by H. Rackham.
+</div>
+{% endblock %}
+

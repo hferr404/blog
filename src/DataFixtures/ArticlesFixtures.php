@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
@@ -11,22 +12,22 @@ class ArticlesFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
 
-        for($i = 1; $i <= 10; $i++)
+        $faker = \Faker\Factory::create('fr_FR');
+
+        for($i = 1; $i < 3; $i++)
         {
-            $articles = new Article; //ctlr + alt + i pr importer la classe (PHP namespace Resolver)
-
-            $articles->setTitle("Titre de l'article n° $i")
-                     ->setContent("<p> Contenu de l'article $i </p>")
-                     ->setImgae("https://picsum.photos/600/400")
-                     ->setCreatedAt(new \DateTime);
-
-                     $manager->persist($articles);
-                     
-
+            $category = new Category;
+            $category->setTitle($faker->sentence())
+                     ->setDescription($faker->paragraph()); 
+            
+            $manager->persist($category);         
         }
+ 
+    }
+}
 
-        $manager->flush();
-        
+
+
 // Pour pouvoir insérer dans la table SQL 'Article', nous devons instancier un objet issu de cette classe
 // L'entité 'Article' reflète la table SQL 'Article'
 // Nous avons besoin de rensigner tout les setteurs et tout les objets $article afin de pouvoir générer les insertions en BDD
@@ -37,7 +38,3 @@ class ArticlesFixtures extends Fixture
 // une fois les fixtures réaliseés, il faut les charger en BDD grace à doctrine (ORM) par la commande : 
 // php bin/console doctrine:fixtures:load
 
-
-        
-    }
-}

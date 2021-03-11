@@ -6,23 +6,52 @@
 
 {% block body %}
 
-    <h1 class="diplay-4 text-center text-white bg-dark rounded shadow-sm my-5 py-2">Création d'un nouvel article</h1>
+    <h1 class="diplay-4 text-center text-white bg-dark rounded shadow-sm my-5 py-2">
+        {% if editMode %}
+         MODIFIER L'ARTICLE   
+        {% else %}
+        INSERER UN NOUVEL ARTICLE
+        {% endif %}
+    </h1>
     
-        <form method="post" class="form-horizontal col-md-5 mx-auto">
-            <div class="form-group">
+      {# <form method="post" class="form-horizontal col-md-5 mx-auto"> #}
+            {# <div class="form-group">
                 <label for="title">Titre</label>
                 <input type="text" class="form-control" id="title" name="title">
             </div>
         <div class="form-group">
                 <label for="content">Contenu de l'article</label>
-                <input type="text" class="form-control" id="content" name="content">
+                <textarea class="form-control" id="content" name="content"></textarea>
             </div>
         <div class="form-group">
                 <label for="imgae">Photo de l'article</label>
                 <input type="text" class="form-control" id="imgae" name="imgae">
             </div>
                 <button type="submit" class="btn btn-primary">Enregistrer l'article</button>
-        </form>
-   
+        </form> #}
+
+   {# {{ form(formArticle) }} #}
+
+   {{form_start(formArticle, { 'attr' : {"class": "col-md-5 mx-auto"} }) }}
+
+        {{form_row(formArticle.title, { 'attr' : {"placeholder" : "Saisir le titre de l'article", 
+        "required" : false, "maxlength" : false, "pattern" : false },
+                                        'label' : "Titre de l'article"}) }}
+
+        {{form_row(formArticle.content, { 'attr' : {"placeholder" : "Contenu de l'article", "rows" : 10},
+                                        'label' : "Contenu de l'article" }) }}
+
+        {{form_row(formArticle.imgae, {'label' : "Photo de l'article"} ) }}
+
+        <input class="btn btn-primary" type="submit" 
+        value=
+        "{% if editMode %}
+         MODIFIER L'ARTICLE   
+        {% else %}
+        ENREGISTRER L'ARTICLE
+        {% endif %}">
+
+
+   {{form_end(formArticle)}}
 
 {% endblock %}

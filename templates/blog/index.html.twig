@@ -9,8 +9,8 @@
 
   <div class="album py-5 bg-light">
    
-
-      <div class="row">
+     
+      <div class="row col-md-10 mx-auto">
 
       {% for data in article %}
 
@@ -18,7 +18,7 @@
 
 
         <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
+          <div class="card mb-4 shadow-lg">
            
             <img src="{{data.imgae}}">
             
@@ -27,8 +27,8 @@
               <p class="card-text">{{ data.content|striptags }}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <a href="{{ path('blog_show', {'id': data.id }) }}" class="btn btn-sm btn-outline-secondary">Lire la suite</a>
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                 <a href="{{ path('blog_show', {'id': data.id }) }}" class="btn btn btn-outline-primary">Lire la suite</a>
+                 <a href="{{ path('blog_edit', {'id': data.id }) }}" class="btn btn btn-outline-danger">Modifier</a>
                 </div>
                                 {# La bdd renvoi un objet issue de la classe DateTime, on ne peut la convertir 
                                 en une chaine de caractère #}
@@ -39,7 +39,7 @@
             </div>
           </div>
         </div>
-       
+   
       {% endfor %}
        
        

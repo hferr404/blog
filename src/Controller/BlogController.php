@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Form\ArticleFormType;
+use Doctrine\ORM\EntityManager;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BlogController extends AbstractController
@@ -58,11 +62,98 @@ class BlogController extends AbstractController
 
     /**
       * @Route("/blog/new", name="blog_create")
+      * @Route("/blog/{id}/edit", name="blog_edit")
       */
-      public function create(Request $request): Response
+      public function create(Article $articleCr = null, Request $request, EntityManagerInterface $manager): Response
       {
           dump($request);
-          return $this->render("blog/create.html.twig");
+
+        // Si la variable $articleCreate N'EST PAS, si elle ne contient aucun article de la BDD, 
+        // cela veut dire nous avons envoyé la route '/blog/new', c'est une insertion, on entre dans le IF et on
+        // crée une nouvelle instance de l'entité Article, création d'un nouvel article
+        // Si la variable $articleCreate contient un article de la BDD, cela veut dire que 
+        // nous avons envoyé la route '/blog/id/edit', c'est une modifiction d'article, on entre pas dans le IF
+
+
+          if(!$articleCr)  
+          {  
+             $articleCr = new Article;
+          }  
+
+          $articleCr->setTitle('Article chelou')
+                    ->setContent('contenu bizare');  
+
+//           if($request->request->count())
+//           {
+
+
+// // $request permet de stocker les données des superglobales, la propriété $request->request 
+// //permet de stocker les données véhiculées par un formulaire ($_POST), ici on compte si 
+// //il y a données qui ont été saisie dans la formulaire
+// // Pour insérer dans la table Article, nous devons instancier un objet issu de la classe entité Article, 
+// //qui est lié à la table SQL Article
+// // On rensigne tout les setteurs de l'objet avec en arguments les données du formulaire ($_POST)
+// // on observe que l'objet entité Article $articleCreate, les propriétés contiennent bien les données du formaulaire
+// // On fait appel au manager afin de pouvoir executer une insertion en BDD
+// // on prépare et garde en mémoire l'insertion
+// // on execute l'insertion
+
+//               $article = new Article;
+
+//               $article->setTitle($request->request->get('title'))
+//                       ->setContent($request->request->get('content')) 
+//                       ->setImgae($request->request->get('imgae')) 
+//                       ->setCreatedAt(new \DateTime);
+
+//                       dump($article);
+
+//                       $manager->persist($article);
+//                       $manager->flush();
+
+
+// // Après l'insertion, on redirige l'internaute vers le détail de l'article qui vient d'être inséré en BDD
+// // Cela correspond à la route 'blog_show', mais c'est une route paramétrée qui attend un ID dans l'URL
+// // En 2ème argument de redirectToRoute, nous transmettons l'ID de l'article qui vient d'être inséré en BDD
+                  
+//               return $this->redirectToRoute('blog_show', [
+//                   'id' => $article->getId()
+//               ]);       
+        //   }
+          
+        
+        
+        // $form = $this->createFormBuilder($article)
+        //              ->add('title')
+        //              ->add('content')
+        //              ->add('imgae')
+        //              ->getForm();  
+
+        $form = $this->createForm(ArticleFormType::class, $articleCr);
+
+        $form->handleRequest($request);
+
+        dump($articleCr);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+
+            if(!$articleCr->getId())
+            {
+                $articleCr->setCreatedAt(new \DateTime);
+            }                                
+
+            $manager->persist($articleCr);
+            $manager->flush();
+
+            return $this->redirectToRoute('blog_show', [
+                "id" => $articleCr->getId()
+            ]);
+        }
+
+          return $this->render("blog/create.html.twig", [
+              'formArticle' => $form->createView(),
+              'editMode' => $articleCr->getId()
+          ]);
       }
 
 
@@ -70,7 +161,7 @@ class BlogController extends AbstractController
      * @Route("/blog/{id}", name="blog_show")
      */
 
-     public function show(Article $article): Response
+     public function show(Article $articleCr): Response
      {
         // $repoArticle = $this->getDoctrine()->getRepository(Article::class);
         // dump($repoArticle);
@@ -82,9 +173,9 @@ class BlogController extends AbstractController
 
 
        //  $article = $repoArticle->find($id);
-         dump($article);
+         dump($articleCr);
          return $this->render('blog/show.html.twig', [
-             "articleTwig" => $article
+             "articleTwig" => $articleCr
          ]);
 
 
